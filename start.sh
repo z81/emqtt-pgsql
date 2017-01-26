@@ -61,7 +61,7 @@ sed -i -e "s/^#*\s*log.console.level\s*=\s*.*/log.console.level = ${EMQ_LOG_LEVE
 
 if [ x"${EMQ_ALLOW_ANONYMOUS}" = x ]
 then
-EMQ_ALLOW_ANONYMOUS="true"
+EMQ_ALLOW_ANONYMOUS="false"
 echo "EMQ_ALLOW_ANONYMOUS=${EMQ_ALLOW_ANONYMOUS}"
 fi
 sed -i -e "s/^#*\s*mqtt.allow_anonymous\s*=\s*.*/mqtt.allow_anonymous = ${EMQ_ALLOW_ANONYMOUS}/g" /opt/emqttd/etc/emq.conf
@@ -163,7 +163,7 @@ sed -i -e "s/^#*\s*mqtt.max_packet_size\s*=\s*.*/mqtt.max_packet_size = ${EMQ_MA
 
 if [ x"${EMQ_LOADED_PLUGINS}" = x ]
 then
-EMQ_LOADED_PLUGINS="emq_recon,emq_dashboard,emq_mod_presence,emq_mod_retainer,emq_mod_subscription"
+EMQ_LOADED_PLUGINS="emq_recon,emq_dashboard,emq_mod_presence,emq_mod_retainer,emq_auth_pgsql"
 echo "EMQ_LOADED_PLUGINS=${EMQ_LOADED_PLUGINS}"
 fi
 # First, remove special char at header
@@ -174,8 +174,42 @@ echo $(echo "${EMQ_LOADED_PLUGINS}."|sed -e "s/^[^A-Za-z0-9_]\{1,\}//g"|sed -e "
 
 ## TODO: Add plugins settings
 
+
+: ${EMQ_AUTH_PGSQL_SSL:="false"}
+: ${EMQ_AUTH_PGSQL_SUPERQUERY:="select is_superuser from mqtt_user where username = '%u' limit 1"}
+: ${EMQ_AUTH_PGSQL_ACLQUERY:="select allow, ipaddr, username, clientid, access, topic from mqtt_acl where ipaddr = '%a' or username = '%u' or username = '$all' or clientid = '%c'"}
+: ${EMQ_AUTH_PGSQL_AUTHQUERY:="select password from mqtt_user where username = '%u' limit 1"}
+: ${EMQ_AUTH_PGSQL_PASSWD_HASH:="salt sha256"}
+: ${EMQ_AUTH_PGSQL_NOMATCH:="deny"}
+: ${EMQ_AUTH_PGSQL_ENCODING:="utf8"}
+: ${EMQ_AUTH_PGSQL_USERNAME:="root"}
+: ${EMQ_AUTH_PGSQL_PASSWORD:="\"\""}
+: ${EMQ_AUTH_PGSQL_DATABASE:="emqtt"}
+: ${EMQ_AUTH_PGSQL_POOL:="8"}
+: ${EMQ_AUTH_PGSQL_SERVER:="127.0.0.1:5432"}
+
+sed -i -e "s/^#*\s*auth.pgsql.server\s*=\s*.*/auth.pgsql.server = ${EMQ_AUTH_PGSQL_SERVER}/g" /opt/emqttd/etc/plugins/emq_auth_pgsql.conf
+sed -i -e "s/^#*\s*auth.pgsql.pool\s*=\s*.*/auth.pgsql.pool = ${EMQ_AUTH_PGSQL_POOL}/g" /opt/emqttd/etc/plugins/emq_auth_pgsql.conf
+sed -i -e "s/^#*\s*auth.pgsql.database\s*=\s*.*/auth.pgsql.database = ${EMQ_AUTH_PGSQL_DATABASE}/g" /opt/emqttd/etc/plugins/emq_auth_pgsql.conf
+sed -i -e "s/^#*\s*auth.pgsql.password\s*=\s*.*/auth.pgsql.password = ${EMQ_AUTH_PGSQL_PASSWORD}/g" /opt/emqttd/etc/plugins/emq_auth_pgsql.conf
+sed -i -e "s/^#*\s*auth.pgsql.username\s*=\s*.*/auth.pgsql.username = ${EMQ_AUTH_PGSQL_USERNAME}/g" /opt/emqttd/etc/plugins/emq_auth_pgsql.conf
+sed -i -e "s/^#*\s*auth.pgsql.encoding\s*=\s*.*/auth.pgsql.encoding = ${EMQ_AUTH_PGSQL_ENCODING}/g" /opt/emqttd/etc/plugins/emq_auth_pgsql.conf
+sed -i -e "s/^#*\s*auth.pgsql.acl_nomatch\s*=\s*.*/auth.pgsql.acl_nomatch = ${EMQ_AUTH_PGSQL_NOMATCH}/g" /opt/emqttd/etc/plugins/emq_auth_pgsql.conf
+sed -i -e "s/^#*auth.pgsql.password_hash\s*=\s*.*/auth.pgsql.password_hash = ${EMQ_AUTH_PGSQL_PASSWD_HASH}/g" /opt/emqttd/etc/plugins/emq_auth_pgsql.conf
+sed -i -e "s/^#*\s*auth.pgsql.auth_query\s*=\s*.*/auth.pgsql.auth_query = ${EMQ_AUTH_PGSQL_AUTHQUERY}/g" /opt/emqttd/etc/plugins/emq_auth_pgsql.conf
+sed -i -e "s/^#*\s*auth.pgsql.acl_query\s*=\s*.*/auth.pgsql.acl_query = ${EMQ_AUTH_PGSQL_ACLQUERY}/g" /opt/emqttd/etc/plugins/emq_auth_pgsql.conf
+sed -i -e "s/^#*\s*auth.pgsql.super_query\s*=\s*.*/auth.pgsql.super_query = ${EMQ_AUTH_PGSQL_SUPERQUERY}/g" /opt/emqttd/etc/plugins/emq_auth_pgsql.conf
+sed -i -e "s/^#*\s*auth.pgsql.ssl\s*=\s*.*/auth.pgsql.ssl = ${EMQ_AUTH_PGSQL_SSL}/g" /opt/emqttd/etc/plugins/emq_auth_pgsql.conf
+
+
+cat /opt/emqttd/etc/plugins/emq_auth_pgsql.conf
 ## EMQ Main script
 # Start and run emqttd, and when emqttd crashed, this container will stop
+
+apk add --no-cache postgresql
+
+port=$(echo $EMQ_AUTH_PGSQL_SERVER | awk -F ':' '{print $2}')
+PGPASSWORD=$EMQ_AUTH_PGSQL_PASSWORD psql --port $port --file table.sql --host ${EMQ_AUTH_PGSQL_SERVER%:*} --username $EMQ_AUTH_PGSQL_USERNAME --dbname $EMQ_AUTH_PGSQL_DATABASE
 
 /opt/emqttd/bin/emqttd start
 
@@ -206,6 +240,7 @@ do
     echo '['$(date -u +"%Y-%m-%dT%H:%M:%SZ")']:emqttd running'
     sleep 20
 done
+
 
 tail $(ls /opt/emqttd/log/*)
 
