@@ -188,19 +188,19 @@ echo $(echo "${EMQ_LOADED_PLUGINS}."|sed -e "s/^[^A-Za-z0-9_]\{1,\}//g"|sed -e "
 : ${EMQ_AUTH_PGSQL_POOL:="8"}
 : ${EMQ_AUTH_PGSQL_SERVER:="127.0.0.1:5432"}
 
-sed -i -e "s/^#*\s*auth.pgsql.server\s*=\s*.*/auth.pgsql.server = ${EMQ_AUTH_PGSQL_SERVER}/g" /opt/emqttd/etc/plugins/emq_auth_pgsql.conf
-sed -i -e "s/^#*\s*auth.pgsql.pool\s*=\s*.*/auth.pgsql.pool = ${EMQ_AUTH_PGSQL_POOL}/g" /opt/emqttd/etc/plugins/emq_auth_pgsql.conf
-sed -i -e "s/^#*\s*auth.pgsql.database\s*=\s*.*/auth.pgsql.database = ${EMQ_AUTH_PGSQL_DATABASE}/g" /opt/emqttd/etc/plugins/emq_auth_pgsql.conf
-sed -i -e "s/^#*\s*auth.pgsql.password\s*=\s*.*/auth.pgsql.password = ${EMQ_AUTH_PGSQL_PASSWORD}/g" /opt/emqttd/etc/plugins/emq_auth_pgsql.conf
-sed -i -e "s/^#*\s*auth.pgsql.username\s*=\s*.*/auth.pgsql.username = ${EMQ_AUTH_PGSQL_USERNAME}/g" /opt/emqttd/etc/plugins/emq_auth_pgsql.conf
-sed -i -e "s/^#*\s*auth.pgsql.encoding\s*=\s*.*/auth.pgsql.encoding = ${EMQ_AUTH_PGSQL_ENCODING}/g" /opt/emqttd/etc/plugins/emq_auth_pgsql.conf
-sed -i -e "s/^#*\s*auth.pgsql.acl_nomatch\s*=\s*.*/auth.pgsql.acl_nomatch = ${EMQ_AUTH_PGSQL_NOMATCH}/g" /opt/emqttd/etc/plugins/emq_auth_pgsql.conf
-sed -i -e "s/^#*auth.pgsql.password_hash\s*=\s*.*/auth.pgsql.password_hash = ${EMQ_AUTH_PGSQL_PASSWD_HASH}/g" /opt/emqttd/etc/plugins/emq_auth_pgsql.conf
-sed -i -e "s/^#*\s*auth.pgsql.auth_query\s*=\s*.*/auth.pgsql.auth_query = ${EMQ_AUTH_PGSQL_AUTHQUERY}/g" /opt/emqttd/etc/plugins/emq_auth_pgsql.conf
-sed -i -e "s/^#*\s*auth.pgsql.acl_query\s*=\s*.*/auth.pgsql.acl_query = ${EMQ_AUTH_PGSQL_ACLQUERY}/g" /opt/emqttd/etc/plugins/emq_auth_pgsql.conf
-sed -i -e "s/^#*\s*auth.pgsql.super_query\s*=\s*.*/auth.pgsql.super_query = ${EMQ_AUTH_PGSQL_SUPERQUERY}/g" /opt/emqttd/etc/plugins/emq_auth_pgsql.conf
-sed -i -e "s/^#*\s*auth.pgsql.ssl\s*=\s*.*/auth.pgsql.ssl = ${EMQ_AUTH_PGSQL_SSL}/g" /opt/emqttd/etc/plugins/emq_auth_pgsql.conf
-
+sed -e "
+    s/^#*\s*auth.pgsql.server\s*=\s*.*/auth.pgsql.server = ${EMQ_AUTH_PGSQL_SERVER}/g;
+    s/^#*\s*auth.pgsql.pool\s*=\s*.*/auth.pgsql.pool = ${EMQ_AUTH_PGSQL_POOL}/g;
+    s/^#*\s*auth.pgsql.database\s*=\s*.*/auth.pgsql.database = ${EMQ_AUTH_PGSQL_DATABASE}/g;
+    s/^#*\s*auth.pgsql.password\s*=\s*.*/auth.pgsql.password = ${EMQ_AUTH_PGSQL_PASSWORD}/g;
+    s/^#*\s*auth.pgsql.username\s*=\s*.*/auth.pgsql.username = ${EMQ_AUTH_PGSQL_USERNAME}/g;
+    s/^#*\s*auth.pgsql.encoding\s*=\s*.*/auth.pgsql.encoding = ${EMQ_AUTH_PGSQL_ENCODING}/g;
+    s/^#*\s*auth.pgsql.acl_nomatch\s*=\s*.*/auth.pgsql.acl_nomatch = ${EMQ_AUTH_PGSQL_NOMATCH}/g;
+    s/^#*auth.pgsql.password_hash\s*=\s*.*/auth.pgsql.password_hash = ${EMQ_AUTH_PGSQL_PASSWD_HASH}/g;
+    s/^#*\s*auth.pgsql.auth_query\s*=\s*.*/auth.pgsql.auth_query = ${EMQ_AUTH_PGSQL_AUTHQUERY}/g;
+    s/^#*\s*auth.pgsql.acl_query\s*=\s*.*/auth.pgsql.acl_query = ${EMQ_AUTH_PGSQL_ACLQUERY}/g;
+    s/^#*\s*auth.pgsql.super_query\s*=\s*.*/auth.pgsql.super_query = ${EMQ_AUTH_PGSQL_SUPERQUERY}/g;
+    s/^#*\s*auth.pgsql.ssl\s*=\s*.*/auth.pgsql.ssl = ${EMQ_AUTH_PGSQL_SSL}/g" -i /opt/emqttd/etc/plugins/emq_auth_pgsql.conf
 
 cat /opt/emqttd/etc/plugins/emq_auth_pgsql.conf
 ## EMQ Main script
