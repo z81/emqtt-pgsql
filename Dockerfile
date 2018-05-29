@@ -1,10 +1,10 @@
-FROM ubuntu
+FROM ubuntu:16.04
 
 RUN apt-get update && \
     apt-get install -y unzip wget && \
-    wget http://emqtt.io/downloads/latest/ubuntu && \
-    unzip ubuntu && \
-    rm ubuntu && \
+    wget http://emqtt.io/downloads/latest/ubuntu16_04 && \
+    unzip ubuntu16_04 && \
+    rm ubuntu16_04 && \
     apt-get remove -y unzip wget && \
     apt-get clean -y && \
     rm -rf /var/lib/apt/lists/*
