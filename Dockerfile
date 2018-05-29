@@ -1,5 +1,20 @@
-FROM emqttd-docker-v2.0.6:latest
-ADD ./start.sh /opt/emqttd/start.sh
+FROM ubuntu
+
+RUN apt-get update && \
+    apt-get install -y unzip wget && \
+    wget http://emqtt.io/downloads/latest/ubuntu && \
+    unzip ubuntu && \
+    rm ubuntu && \
+    apt-get remove -y unzip wget && \
+    apt-get clean -y && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /emqttd
+VOLUME ["/emqttd/etc", "/emqttd/data", "/emqttd/plugins"]
+
+ADD ./start.sh /emqttd/start.sh
+RUN chmod +x /emqttd/start.sh
+
 ADD ./table.sql /opt/emqttd/table.sql
 
 WORKDIR /opt/emqttd
