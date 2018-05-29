@@ -76,14 +76,13 @@ RUN set -ex \
         ncurses-libs \
         readline \
     # add latest rebar
-    && git clone -b ${EMQ_VERSION} https://github.com/emqtt/emq-relx.git /emqttd \
-    && cd /emqttd \
+    && git clone -b ${EMQ_VERSION} https://github.com/emqtt/emq-relx.git /emqttd_g \
+    && cd /emqttd_g \
     && make \
-    && mkdir -p /opt && mv /emqttd/_rel/emqttd /opt/emqttd \
-    && cd / && rm -rf /emqttd \
-    && mv /start.sh /opt/emqttd/start.sh \
-    && chmod +x /opt/emqttd/start.sh \
-    && ln -s /opt/emqttd/bin/* /usr/local/bin/ \
+    && mkdir -p /emqttd && mv /emqttd_g/_rel/emqttd /emqttd \
+    && cd / && rm -rf /emqttd_g \
+    && chmod +x /emqttd/start.sh \
+    && ln -s /emqttd/bin/* /usr/local/bin/ \
     # removing fetch deps and build deps
     && apk --purge del .build-deps .fetch-deps \
     && rm -rf /var/cache/apk/*
