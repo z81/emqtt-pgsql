@@ -15,7 +15,7 @@ VOLUME ["/emqttd/etc", "/emqttd/data", "/emqttd/plugins"]
 ADD ./start.sh /emqttd/start.sh
 RUN chmod +x /emqttd/start.sh
 
-ADD ./table.sql /opt/emqttd/table.sql
+ADD ./table.sql /emqttd/table.sql
 
 # start emqttd and initial environments
 CMD ["/emqttd/start.sh"]
