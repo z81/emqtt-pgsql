@@ -72,6 +72,7 @@ RUN set -ex \
     && apk add --no-cache --virtual .fetch-deps \
     git \
     wget \
+    postgresql-client \
     # add run deps, never remove
     && apk add --no-cache --virtual .run-deps \
     ncurses-terminfo-base \
