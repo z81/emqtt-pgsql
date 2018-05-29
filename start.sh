@@ -186,10 +186,11 @@ echo $(echo "${EMQ_LOADED_PLUGINS}."|sed -e "s/^[^A-Za-z0-9_]\{1,\}//g"|sed -e "
 : ${EMQ_AUTH_PGSQL_PASSWORD:="\"\""}
 : ${EMQ_AUTH_PGSQL_DATABASE:="emqtt"}
 : ${EMQ_AUTH_PGSQL_POOL:="8"}
-: ${EMQ_AUTH_PGSQL_SERVER:="127.0.0.1:5432"}
+: ${EMQ_AUTH_PGSQL_HOST:="127.0.0.1"}
+: ${EMQ_AUTH_PGSQL_PORT:="5432"}
 
 sed -e "
-    s/^#*\s*auth.pgsql.server\s*=\s*.*/auth.pgsql.server = ${EMQ_AUTH_PGSQL_SERVER}/g;
+    s/^#*\s*auth.pgsql.server\s*=\s*.*/auth.pgsql.server = ${EMQ_AUTH_PGSQL_HOST}:${EMQ_AUTH_PGSQL_PORT}/g;
     s/^#*\s*auth.pgsql.pool\s*=\s*.*/auth.pgsql.pool = ${EMQ_AUTH_PGSQL_POOL}/g;
     s/^#*\s*auth.pgsql.database\s*=\s*.*/auth.pgsql.database = ${EMQ_AUTH_PGSQL_DATABASE}/g;
     s/^#*\s*auth.pgsql.password\s*=\s*.*/auth.pgsql.password = ${EMQ_AUTH_PGSQL_PASSWORD}/g;
