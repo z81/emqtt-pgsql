@@ -17,10 +17,8 @@ RUN chmod +x /emqttd/start.sh
 
 ADD ./table.sql /opt/emqttd/table.sql
 
-WORKDIR /opt/emqttd
-
 # start emqttd and initial environments
-CMD ["/opt/emqttd/start.sh"]
+CMD ["/emqttd/start.sh"]
 
 # emqttd will occupy these port:
 # - 1883 port for MQTT
