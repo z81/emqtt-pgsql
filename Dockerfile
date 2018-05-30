@@ -77,6 +77,7 @@ RUN set -ex \
     ncurses-terminfo-base \
     ncurses-terminfo \
     ncurses-libs \
+    postgresql-client \
     readline \
     # add latest rebar
     && git clone -b ${EMQ_VERSION} https://github.com/emqtt/emq-relx.git /emqttd \
@@ -91,7 +92,6 @@ RUN set -ex \
     && apk --purge del .build-deps .fetch-deps \
     && rm -rf /var/cache/apk/*
 
-RUN apk add --no-cache postgresql-client
 WORKDIR /opt/emqttd
 
 # start emqttd and initial environments
@@ -104,12 +104,10 @@ RUN chgrp -Rf root /opt/emqttd && chmod -Rf g+w /opt/emqttd \
 
 USER emqtt
 
-VOLUME ["/opt/emqttd/log", "/opt/emqttd/data", "/opt/emqttd/lib", "/opt/emqttd/etc"]
+VOLUME ["/opt/emqttd/log", "/opt/emqttd/data", "/opt/emqttd/lib", "/opt/emqttd/etc", "/opt/emqttd"]
 
 ADD ./start.sh /opt/emqttd/start.sh
 ADD ./table.sql /opt/emqttd/table.sql
-
-WORKDIR /opt/emqttd
 
 # start emqttd and initial environments
 CMD ["/opt/emqttd/start.sh"]

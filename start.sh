@@ -209,8 +209,7 @@ cat /opt/emqttd/etc/plugins/emq_auth_pgsql.conf
 
 apk add --no-cache postgresql
 
-port=$(echo $EMQ_AUTH_PGSQL_SERVER | awk -F ':' '{print $2}')
-PGPASSWORD=$EMQ_AUTH_PGSQL_PASSWORD psql --port $port --file table.sql --host ${EMQ_AUTH_PGSQL_SERVER%:*} --username $EMQ_AUTH_PGSQL_USERNAME --dbname $EMQ_AUTH_PGSQL_DATABASE
+PGPASSWORD=$EMQ_AUTH_PGSQL_PASSWORD psql --port $EMQ_AUTH_PGSQL_PORT --file table.sql --host $EMQ_AUTH_PGSQL_HOST --username $EMQ_AUTH_PGSQL_USERNAME --dbname $EMQ_AUTH_PGSQL_DATABASE
 
 /opt/emqttd/bin/emqttd start
 
