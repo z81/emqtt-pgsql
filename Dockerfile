@@ -72,7 +72,6 @@ RUN set -ex \
     && apk add --no-cache --virtual .fetch-deps \
     git \
     wget \
-    postgresql-client \
     # add run deps, never remove
     && apk add --no-cache --virtual .run-deps \
     ncurses-terminfo-base \
@@ -92,6 +91,7 @@ RUN set -ex \
     && apk --purge del .build-deps .fetch-deps \
     && rm -rf /var/cache/apk/*
 
+RUN apk add --no-cache postgresql-client
 WORKDIR /opt/emqttd
 
 # start emqttd and initial environments
